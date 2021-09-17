@@ -20,7 +20,7 @@ cfg = {
 
 DB = Database(cfg)
 ITA = pytz.timezone("Europe/Rome")
-DELTA_MIN = 1
+DELTA_MIN = 5
 
 
 def get_drawing_data(data, from_date, to_date, column="people_count"):
