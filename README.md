@@ -1,2 +1,1 @@
-# Convention2021
-Convention2021
+# ConventionVarGroup2021
