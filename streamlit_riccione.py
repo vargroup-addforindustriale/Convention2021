@@ -20,7 +20,7 @@ cfg = {
 
 DB = Database(cfg)
 ITA = pytz.timezone("Europe/Rome")
-DELTA_MIN = 5
+DELTA_MIN = 1
 
 
 def get_drawing_data(data, from_date, to_date, column="people_count"):
@@ -50,18 +50,24 @@ def get_drawing_data(data, from_date, to_date, column="people_count"):
 def draw_histogram(data, column="count", title_name="People Count"):
 
     if not data.empty:
-        data["color"] = 'blue'
-        data.iloc[-1, data.columns.get_loc('color')] = 'green'
-        # draw histogram colored
+        if title_name == "Indice distanziamento Sociale medio":
+            data["color"] = 'green'
+            data["color"].loc[data['count'] < 0.5] = 'red'
+        else:
+            data["color"] = 'navy'
+        
+        # data["color"] = 'blue'
+        # data.iloc[-1, data.columns.get_loc('color')] = 'green'
         # fig = px.histogram(data, x='time', y='count', color='color',  width=400, height=400)
-        fig = px.bar(data, x='time', y='count', color='color',  width=400, height=400)
+        # draw data with color 
+        fig = px.bar(data, x='time', y='count', color="color", color_discrete_sequence=data.color.unique(), width=400, height=400)
 
-        #remove color legend
         fig.update_traces(showlegend=False)
         my_layout = go.Layout({"title": title_name, 
                                 "yaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''},
                                 "xaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''}})
         fig.update_layout( my_layout )        
+        
         config = {'staticPlot': True}
         st.plotly_chart(fig, config=config)
         
@@ -74,8 +80,7 @@ def is_online(data, start_time):
 
 def main():
  
-    st.title("Var Group - Social Distancing")   
-    # st.subheader("Addfor Industriale")
+    st.title("Var Group - Distanziamento Sociale")   
     
     now = datetime.datetime.now().astimezone(ITA)
     current_time = now.strftime("%d-%m-%Y %H:%M")
@@ -86,38 +91,38 @@ def main():
     data = DB.get_last_update()
     
     if is_online(data, now):
-        st.write(f"🟢 Camera Online - Current Time: {current_time}")
+        st.write(f"🟢 Camera Online - Ora Attuale: {current_time}")
     else:
-        st.write(f"🔴 Camera Offline - Current Time: {current_time}")
+        st.write(f"🔴 Camera Offline - Ora Attuale: {current_time}")
 
 
     with st.container():
         people_count = data['people_count']
-        st.header(f"🚶Current People Counting: {people_count}")
+        st.header(f"🚶Conteggio Persone Attuale: {people_count}")
         people_count_df = get_drawing_data(last_hour, from_date, now, column="people_count")
-        draw_histogram(people_count_df, title_name = "Average People Counting")
-        parag = "Numero medio di persone nella stanza null'ultima ora a intervalli di 5 minuti"
+        draw_histogram(people_count_df, title_name = "Numero medio di persone")
+        parag = "Numero medio di persone nell'ultima ora a intervalli di 5 minuti"
         st.write(parag)
 
     with st.container():
         covid_risk = data['covid_risk']
-        st.header(f"⚠️Current Social Distancing Index: {covid_risk:.2f}")
+        st.header(f"⚠️ Indice Distanziamento Sociale Attuale: {covid_risk:.2f}")
         covid_risk_df = get_drawing_data(last_hour, from_date, now, column="covid_risk")
-        draw_histogram(covid_risk_df,  title_name = "Average Social Distancing Index")
-        parag = "Numero medio di persone nella stanza null'ultima ora a intervalli di 5 minuti"
+        draw_histogram(covid_risk_df,  title_name = "Indice distanziamento Sociale medio")
+        parag = "Indice distanziamento Sociale nell'ultima ora a intervalli di 5 minuti"
         st.write(parag)
 
 
     col1, col2, col3 = st.columns(3)
-    button = col2.button(label="Update")
+    button = col2.button(label="Aggiorna")
     if button:
         st.balloons()
     
-    with st.expander("See explanation"):
+    with st.expander("Apri Spiegazione"):
      st.write("""
-         The charts above show the people count and the social distancing index in the last hour. \n
-         The social distancing index is considered as the factor between: \n
-         (number of people with distance higher than 1 mt ) / (total number of people) """)
+         I grafici mostrano il numero medio di persone e l'indice di distanziamento sociale nell'ultima ora a intervalli di 5 minuti. \n
+         L'indice di distanziamento Sociale è considerato come:
+         (numero di persone distanti più di 70 cm ) / (numero totale di persone) """)
 
 if __name__ == '__main__':
     main()
