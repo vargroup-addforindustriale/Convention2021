@@ -56,10 +56,6 @@ def draw_histogram(data, column="count", title_name="People Count"):
         else:
             data["color"] = 'navy'
         
-        # data["color"] = 'blue'
-        # data.iloc[-1, data.columns.get_loc('color')] = 'green'
-        # fig = px.histogram(data, x='time', y='count', color='color',  width=400, height=400)
-        # draw data with color 
         fig = px.bar(data, x='time', y='count', color="color", color_discrete_sequence=data.color.unique(), width=400, height=400)
 
         fig.update_traces(showlegend=False)
@@ -67,7 +63,7 @@ def draw_histogram(data, column="count", title_name="People Count"):
                                 "yaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''},
                                 "xaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''}})
         fig.update_layout( my_layout )        
-        
+        fig.update_layout(xaxis=go.layout.XAxis( tickangle = 330))
         config = {'staticPlot': True}
         st.plotly_chart(fig, config=config)
         
