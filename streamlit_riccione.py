@@ -60,7 +60,7 @@ def draw_histogram(data, column="count", title_name="People Count"):
         fig = px.bar(data, x='time', y='count',  width=400, height=400)
         
         fig.update_traces(showlegend=False)
-        my_layout = go.Layout({"title": title_name, 
+        my_layout = go.Layout({"title": "", 
                                 "yaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''},
                                 "xaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''}})
         fig.update_layout( my_layout )        
@@ -77,8 +77,8 @@ def is_online(data, start_time):
 
 def main():
  
-    st.title("Var Group - Distanziamento Sociale")   
-    
+    st.title("Var Group - Convention 2021")   
+    st.subheader("Analisi Distanziamento Sociale")
     now = datetime.datetime.now().astimezone(ITA)
     current_time = now.strftime("%d-%m-%Y %H:%M")
     from_date = now - relativedelta(hours=1)
@@ -88,25 +88,25 @@ def main():
     data = DB.get_last_update()
     
     if is_online(data, now):
-        st.write(f"🟢 Camera Online - Ora Attuale: {current_time}")
+        st.write(f"🟢 Camera Online")
     else:
-        st.write(f"🔴 Camera Offline - Ora Attuale: {current_time}")
-
+        st.write(f"🔴 Camera Offline")
+    st.write(f"Ora Attuale: {current_time}")
 
     with st.container():
-        people_count = data['people_count']
-        st.header(f"🚶Conteggio Persone Attuale: {people_count}")
+        current_people_count = data['current_people_count']
+        st.header(f"🚶Conteggio Persone Attuale: {current_people_count}")
         people_count_df = get_drawing_data(last_hour, from_date, now, column="people_count")
         draw_histogram(people_count_df, title_name = "Numero medio di persone")
-        parag = "Numero medio di persone nell'ultima ora a intervalli di 5 minuti"
+        parag = "Numero medio di persone nell'ultima ora ad intervalli di 5 minuti"
         st.write(parag)
 
     with st.container():
-        covid_risk = data['covid_risk']
-        st.header(f"⚠️ Indice Distanziamento Sociale Attuale: {covid_risk:.2f}")
+        current_covid_risk = data['current_covid_risk']
+        st.header(f"⚠️ Indice di Distanziamento Sociale Attuale: {int(current_covid_risk*100)} %")
         covid_risk_df = get_drawing_data(last_hour, from_date, now, column="covid_risk")
         draw_histogram(covid_risk_df,  title_name = "Indice distanziamento Sociale medio")
-        parag = "Indice distanziamento Sociale nell'ultima ora a intervalli di 5 minuti"
+        parag = "Indice di distanziamento sociale medio nell'ultima ora a intervalli di 5 minuti"
         st.write(parag)
 
 
