@@ -50,20 +50,21 @@ def get_drawing_data(data, from_date, to_date, column="people_count"):
 def draw_histogram(data, column="count", title_name="People Count"):
 
     if not data.empty:
-        if title_name == "Indice distanziamento Sociale medio":
-            data["color"] = 'green'
-            data["color"].loc[data['count'] < 0.5] = 'red'
-        else:
-            data["color"] = 'navy'
+        # if title_name == "Indice distanziamento Sociale medio":
+        #     data["color"] = 'green'
+        #     data["color"].loc[data['count'] < 0.5] = 'red'
+        # else:
+        #     data["color"] = 'navy'
         
-        fig = px.bar(data, x='time', y='count', color="color", color_discrete_sequence=data.color.unique(), width=400, height=400)
-
+        # fig = px.bar(data, x='time', y='count', color="color", width=400, height=400)
+        fig = px.bar(data, x='time', y='count',  width=400, height=400)
+        
         fig.update_traces(showlegend=False)
         my_layout = go.Layout({"title": title_name, 
                                 "yaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''},
                                 "xaxis": {'visible': True, 'showticklabels': True, 'ticks': 'outside', 'title': ''}})
         fig.update_layout( my_layout )        
-        fig.update_layout(xaxis=go.layout.XAxis( tickangle = 330))
+        fig.update_layout(xaxis=go.layout.XAxis( tickangle = 330))  
         config = {'staticPlot': True}
         st.plotly_chart(fig, config=config)
         
