@@ -103,10 +103,10 @@ def main():
 
     with st.container():
         current_covid_risk = data['current_covid_risk']
-        st.header(f"⚠️ Indice di Distanziamento Sociale Attuale: {int(current_covid_risk*100)} %")
+        st.header(f"⚠️ Distanziamento Sociale Attuale: {int(current_covid_risk*100)}%")
         covid_risk_df = get_drawing_data(last_hour, from_date, now, column="covid_risk")
         draw_histogram(covid_risk_df,  title_name = "Indice distanziamento Sociale medio")
-        parag = "Indice di distanziamento sociale medio nell'ultima ora a intervalli di 5 minuti"
+        parag = "Distanziamento sociale medio nell'ultima ora a intervalli di 5 minuti"
         st.write(parag)
 
 
@@ -119,7 +119,10 @@ def main():
      st.write("""
          I grafici mostrano il numero medio di persone e l'indice di distanziamento sociale nell'ultima ora a intervalli di 5 minuti. \n
          L'indice di distanziamento Sociale è considerato come:
-         (numero di persone distanti più di 70 cm ) / (numero totale di persone) """)
+         (numero di persone distanti più di 70 cm ) / (numero totale di persone) \n
+         0%: Tutte le persone sono distanti MENO di 70 cm \n
+         100%: Tutte le persone sono distanti PIÙ di 70 cm      
+         """)
 
 if __name__ == '__main__':
     main()
